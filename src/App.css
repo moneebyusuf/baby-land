@@ -9,12 +9,8 @@ body {
   color: #333;
 }
 
-.app {
-  width: 100%;
-  min-height: 100vh;
-}
-
 .navbar {
+  width: 100%;
   background-color: #ff8fc7;
   color: white;
   padding: 18px 60px;
@@ -62,7 +58,10 @@ body {
   line-height: 1.6;
 }
 
-.hero-text button {
+.btn,
+.add-btn,
+.contact-form button {
+  display: inline-block;
   margin-top: 20px;
   background-color: #e75480;
   color: white;
@@ -71,6 +70,7 @@ body {
   border-radius: 25px;
   font-size: 18px;
   cursor: pointer;
+  text-decoration: none;
 }
 
 .hero-card {
@@ -86,51 +86,93 @@ body {
   font-size: 70px;
 }
 
-.products {
-  padding: 60px;
-  background-color: white;
-  text-align: center;
-}
-
-.products h2,
-.about h2,
-.footer h2 {
-  color: #e75480;
-  font-size: 36px;
-}
-
-.product-grid {
-  margin-top: 35px;
-  display: grid;
-  grid-template-columns: repeat(4, 1fr);
-  gap: 25px;
-}
-
-.product-card {
-  background-color: #fff7fb;
-  padding: 30px;
-  border-radius: 20px;
-  box-shadow: 0 8px 18px rgba(0, 0, 0, 0.08);
-}
-
-.product-card span {
-  font-size: 50px;
-}
-
-.product-card h3 {
-  color: #e75480;
-}
-
-.about {
+.features,
+.products,
+.page {
   padding: 70px 60px;
   text-align: center;
 }
 
-.about p {
-  max-width: 700px;
-  margin: auto;
+.features h2,
+.products h2,
+.page h2 {
+  color: #e75480;
+  font-size: 36px;
+}
+
+.feature-grid,
+.product-grid {
+  margin-top: 35px;
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+  gap: 25px;
+}
+
+.feature-card,
+.product-card,
+.empty-cart {
+  background-color: white;
+  padding: 25px;
+  border-radius: 20px;
+  box-shadow: 0 8px 18px rgba(0, 0, 0, 0.08);
+  text-align: center;
+}
+
+.feature-card span,
+.empty-cart span {
+  font-size: 50px;
+}
+
+.product-image {
+  width: 100%;
+  height: 220px;
+  object-fit: cover;
+  border-radius: 15px;
+  margin-bottom: 15px;
+}
+
+.product-card h3,
+.feature-card h3 {
+  color: #e75480;
+}
+
+.add-btn {
+  display: block;
+  margin: 18px auto 0;
+  font-size: 16px;
+  padding: 10px 22px;
+}
+
+.page {
+  min-height: 60vh;
+}
+
+.page p {
+  max-width: 800px;
+  margin: 15px auto;
   font-size: 20px;
   line-height: 1.7;
+}
+
+.contact-form {
+  max-width: 500px;
+  margin: 30px auto;
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+}
+
+.contact-form input,
+.contact-form textarea {
+  padding: 14px;
+  border: 1px solid #ddd;
+  border-radius: 12px;
+  font-size: 16px;
+}
+
+.contact-form textarea {
+  height: 140px;
+  resize: none;
 }
 
 .footer {
@@ -141,6 +183,7 @@ body {
 }
 
 .footer h2 {
+  margin: 0;
   color: white;
 }
 
@@ -152,11 +195,18 @@ body {
     padding: 30px;
   }
 
-  .product-grid {
-    grid-template-columns: 1fr;
+  .nav-links {
+    flex-wrap: wrap;
+    justify-content: center;
   }
 
   .hero-text h2 {
     font-size: 36px;
+  }
+
+  .features,
+  .products,
+  .page {
+    padding: 40px 25px;
   }
 }
