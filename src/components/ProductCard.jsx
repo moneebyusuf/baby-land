@@ -9,7 +9,7 @@ function ProductCard({ product }) {
       <p>{product.description}</p>
       <strong>${product.price}</strong>
 
-      <Link to={`/products/${product.id}`} className="add-btn">
+      <Link to={`/products/${product._id}`} className="add-btn">
         View Details
       </Link>
     </div>
