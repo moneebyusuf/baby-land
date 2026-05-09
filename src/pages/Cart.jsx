@@ -80,7 +80,10 @@ function Cart({ cartItems, removeFromCart, setCartItems, user }) {
         <PayPalScriptProvider
           options={{
             clientId: import.meta.env.VITE_PAYPAL_CLIENT_ID,
-            currency: 'USD'
+            currency: 'USD',
+            intent: 'capture',
+            components: 'buttons',
+            disableFunding: 'card'
           }}
         >
           <PayPalButtons
@@ -90,20 +93,49 @@ function Cart({ cartItems, removeFromCart, setCartItems, user }) {
               shape: 'pill',
               label: 'paypal'
             }}
-            createOrder={(data, actions) => {
-              return actions.order.create({
-                purchase_units: [
-                  {
-                    amount: {
-                      value: total.toFixed(2)
-                    }
-                  }
-                ]
-              })
+            createOrder={async () => {
+              const response = await fetch(
+                'http://localhost:5000/api/paypal/create-order',
+                {
+                  method: 'POST',
+                  headers: {
+                    'Content-Type': 'application/json'
+                  },
+                  body: JSON.stringify({
+                    total: total.toFixed(2)
+                  })
+                }
+              )
+
+              const order = await response.json()
+
+              if (!response.ok) {
+                throw new Error(order.message || 'Could not create PayPal order')
+              }
+
+              return order.id
             }}
-            onApprove={async (data, actions) => {
+            onApprove={async (data) => {
               try {
-                await actions.order.capture()
+                const response = await fetch(
+                  `http://localhost:5000/api/paypal/capture-order/${data.orderID}`,
+                  {
+                    method: 'POST'
+                  }
+                )
+
+                const details = await response.json()
+
+                if (!response.ok) {
+                  alert(details.message || 'Payment capture failed.')
+                  return
+                }
+
+                if (details.status !== 'COMPLETED') {
+                  alert('Payment was not completed.')
+                  return
+                }
+
                 await saveOrderToDatabase()
 
                 alert('Payment completed and order saved successfully!')
@@ -113,7 +145,8 @@ function Cart({ cartItems, removeFromCart, setCartItems, user }) {
                 alert(error.message || 'Something went wrong.')
               }
             }}
-            onError={() => {
+            onError={(error) => {
+              console.log(error)
               alert('PayPal payment failed.')
             }}
           />

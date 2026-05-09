@@ -7,6 +7,8 @@ const authRoutes = require('./routes/authRoutes')
 const productRoutes = require('./routes/productRoutes')
 const orderRoutes = require('./routes/orderRoutes')
 const app = express()
+const paypalRoutes = require('./routes/paypalRoutes')
+
 
 app.use(cors())
 app.use(express.json())
@@ -18,6 +20,7 @@ app.get('/', (req, res) => {
 app.use('/api/auth', authRoutes)
 app.use('/api/products', productRoutes)
 app.use('/api/orders', orderRoutes)
+app.use('/api/paypal', paypalRoutes)
 
 mongoose
   .connect(process.env.MONGO_URI)
