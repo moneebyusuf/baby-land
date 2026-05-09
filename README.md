@@ -157,7 +157,6 @@ baby-land/
 | `/register` | Register | User registration page |
 | `/about` | About | Information about Baby Land |
 | `/contact` | Contact | Contact form page |
-
 ---
 
 ## Authentication Flow
