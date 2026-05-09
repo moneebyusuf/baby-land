@@ -334,3 +334,7 @@ body {
   cursor: pointer;
   margin-top: 15px;
 }
+.paypal-container {
+  max-width: 420px;
+  margin: 25px auto 0;
+}

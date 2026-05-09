@@ -1,15 +1,12 @@
+import { PayPalScriptProvider, PayPalButtons } from '@paypal/react-paypal-js'
+
 function Cart({ cartItems, removeFromCart, setCartItems, user }) {
   const total = cartItems.reduce(
     (sum, item) => sum + item.price * item.quantity,
     0
   )
 
-  async function handleCheckout() {
-    if (cartItems.length === 0) {
-      alert('Your cart is empty.')
-      return
-    }
-
+  async function saveOrderToDatabase() {
     const orderItems = cartItems.map((item) => ({
       productId: item._id,
       name: item.name,
@@ -18,33 +15,26 @@ function Cart({ cartItems, removeFromCart, setCartItems, user }) {
       quantity: item.quantity
     }))
 
-    try {
-      const response = await fetch('http://localhost:5000/api/orders', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json'
-        },
-        body: JSON.stringify({
-          userId: user.id,
-          username: user.username,
-          items: orderItems,
-          totalPrice: total
-        })
+    const response = await fetch('http://localhost:5000/api/orders', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({
+        userId: user.id,
+        username: user.username,
+        items: orderItems,
+        totalPrice: total
       })
+    })
 
-      const data = await response.json()
+    const data = await response.json()
 
-      if (!response.ok) {
-        alert(data.message || 'Checkout failed')
-        return
-      }
-
-      alert('Order placed successfully!')
-      setCartItems([])
-      localStorage.removeItem('cartItems')
-    } catch (error) {
-      alert('Cannot connect to server.')
+    if (!response.ok) {
+      throw new Error(data.message || 'Order could not be saved')
     }
+
+    return data
   }
 
   if (cartItems.length === 0) {
@@ -86,9 +76,49 @@ function Cart({ cartItems, removeFromCart, setCartItems, user }) {
 
       <h3 className="cart-total">Total: ${total.toFixed(2)}</h3>
 
-      <button className="checkout-btn" onClick={handleCheckout}>
-        Checkout
-      </button>
+      <div className="paypal-container">
+        <PayPalScriptProvider
+          options={{
+            clientId: import.meta.env.VITE_PAYPAL_CLIENT_ID,
+            currency: 'USD'
+          }}
+        >
+          <PayPalButtons
+            style={{
+              layout: 'vertical',
+              color: 'blue',
+              shape: 'pill',
+              label: 'paypal'
+            }}
+            createOrder={(data, actions) => {
+              return actions.order.create({
+                purchase_units: [
+                  {
+                    amount: {
+                      value: total.toFixed(2)
+                    }
+                  }
+                ]
+              })
+            }}
+            onApprove={async (data, actions) => {
+              try {
+                await actions.order.capture()
+                await saveOrderToDatabase()
+
+                alert('Payment completed and order saved successfully!')
+                setCartItems([])
+                localStorage.removeItem('cartItems')
+              } catch (error) {
+                alert(error.message || 'Something went wrong.')
+              }
+            }}
+            onError={() => {
+              alert('PayPal payment failed.')
+            }}
+          />
+        </PayPalScriptProvider>
+      </div>
     </section>
   )
 }
