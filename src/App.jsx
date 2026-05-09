@@ -12,6 +12,7 @@ import Contact from './pages/Contact'
 import Login from './pages/Login'
 import Register from './pages/Register'
 import './App.css'
+import MyOrders from './pages/MyOrders'
 
 function App() {
   const [cartItems, setCartItems] = useState(() => {
@@ -119,6 +120,10 @@ function App() {
         <Route
           path="/register"
           element={user ? <Navigate to="/" /> : <Register login={login} />}
+        />
+        <Route
+          path="/orders"
+          element={user ? <MyOrders user={user} /> : <Navigate to="/login" />}
         />
       </Routes>
 

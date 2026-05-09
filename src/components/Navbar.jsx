@@ -10,7 +10,8 @@ function Navbar({ user, logout, cartCount }) {
         <Link to="/products">Products</Link>
 
         {user && <Link to="/cart">Cart ({cartCount})</Link>}
-
+        {user && <Link to="/orders">My Orders</Link>}
+        
         <Link to="/about">About</Link>
         <Link to="/contact">Contact</Link>
 
